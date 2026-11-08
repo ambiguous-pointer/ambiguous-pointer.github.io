@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>架构师简历 | XX</title>
+    
+    <!-- 核心依赖：Vue 3, Tailwind CSS, Anime.js, Google Fonts -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- 图标库 -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* 自定义全局样式 */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #050505;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+        
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #38bdf8; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0ea5e9; 
+        }
+
+        /* 霓虹光效工具类 */
+        .neon-text {
+            text-shadow: 0 0 10px rgba(56, 189, 248, 0.5), 0 0 20px rgba(56, 189, 248, 0.3);
+        }
+        .neon-border {
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.2), inset 0 0 10px rgba(56, 189, 248, 0.1);
+        }
+
+        /* 玻璃拟态 */
+        .glass-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(56, 189, 248, 0.1);
+        }
+
+        /* 光标闪烁动画 */
+        .cursor-blink {
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* 技能卡片悬停效果 */
+        .skill-card:hover {
+            transform: translateY(-5px);
+            border-color: #38bdf8;
+            box-shadow: 0 10px 30px -10px rgba(56, 189, 248, 0.3);
+        }
+
+        /* 3D Tilt 效果基础 */
+        .project-card {
+            transition: transform 0.1s;
+            transform-style: preserve-3d;
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            opacity: 0.4;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app" class="relative min-h-screen">
+    <!-- 背景 Canvas -->
+    <canvas id="bgCanvas"></canvas>
+
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 w-full z-50 transition-all duration-300" :class="{'bg-black/80 backdrop-blur-md border-b border-white/10': isScrolled, 'bg-transparent': !isScrolled}">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold font-mono text-white tracking-tighter">
+                <span class="text-cyan-400">&lt;</span>XX<span class="text-cyan-400">/&gt;</span>
+            </div>
+            <div class="hidden md:flex space-x-8 text-sm font-mono text-gray-300">
+                <a href="#about" class="hover:text-cyan-400 transition-colors">~/ABOUT</a>
+                <a href="#skills" class="hover:text-cyan-400 transition-colors">~/SKILLS</a>
+                <a href="#projects" class="hover:text-cyan-400 transition-colors">~/PROJECTS</a>
+                <a href="#contact" class="hover:text-cyan-400 transition-colors">~/CONTACT</a>
+            </div>
+            <!-- 移动端菜单按钮略 -->
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="min-h-screen flex items-center justify-center relative pt-20">
+        <div class="text-center z-10 px-4">
+            <div class="inline-block px-3 py-1 mb-4 text-xs font-mono text-cyan-300 border border-cyan-500/30 rounded-full bg-cyan-900/20 animate-fade-in-up">
+                v2025.10.RELEASE
+            </div>
+            <h1 class="text-5xl md:text-8xl font-black text-white mb-6 tracking-tight animate-title">
+                全栈 <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600 neon-text">架构师</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-400 mb-8 max-w-2xl mx-auto font-light">
+                构建高并发、高可用、容器化的分布式未来
+            </p>
+            
+            <div class="flex justify-center gap-4">
+                <a href="#about" class="group relative px-8 py-3 bg-cyan-500 hover:bg-cyan-400 text-black font-bold rounded-sm transition-all overflow-hidden">
+                    <span class="relative z-10 flex items-center gap-2">
+                        <i data-lucide="terminal-square" class="w-5 h-5"></i> 查看履历
+                    </span>
+                    <div class="absolute inset-0 h-full w-full scale-0 rounded-sm transition-all duration-300 group-hover:scale-100 group-hover:bg-white/20"></div>
+                </a>
+                <a href="#projects" class="px-8 py-3 border border-white/20 hover:border-cyan-400 text-white hover:text-cyan-400 transition-all rounded-sm">
+                    浏览项目
+                </a>
+            </div>
+            
+            <!-- 统计数据 -->
+            <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 border-t border-white/10 pt-8 max-w-4xl mx-auto">
+                <div v-for="(stat, index) in stats" :key="index" class="text-center">
+                    <div class="text-3xl font-bold text-white font-mono">{{ stat.value }}</div>
+                    <div class="text-xs text-gray-500 mt-1 uppercase tracking-wider">{{ stat.label }}</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- About / Terminal Section -->
+    <section id="about" class="py-20 relative">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row gap-12 items-center">
+                <!-- 左侧：终端模拟器 -->
+                <div class="w-full md:w-1/2">
+                    <div class="glass-card rounded-lg overflow-hidden shadow-2xl border border-gray-700 font-mono text-sm transform transition-all hover:scale-[1.01] duration-500">
+                        <div class="bg-gray-800/80 px-4 py-2 flex items-center gap-2 border-b border-gray-700">
+                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            <span class="ml-2 text-gray-400 text-xs">root@dev-server: ~</span>
+                        </div>
+                        <div class="p-6 h-[400px] overflow-y-auto bg-black/90 text-green-400">
+                            <div v-html="terminalContent"></div>
+                            <span class="cursor-blink">_</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧：简介 -->
+                <div class="w-full md:w-1/2 space-y-6">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white flex items-center gap-3">
+                        <i data-lucide="cpu" class="text-cyan-400"></i> 关于我
+                    </h2>
+                    <p class="text-gray-400 leading-relaxed">
+                        追求极致性能的后端开发者。我不止编写代码，更设计系统。
+                        从<span class="text-cyan-400">JVM底层原理</span>到<span class="text-cyan-400">K8S集群编排</span>，
+                        从<span class="text-cyan-400">IoT物联网</span>到<span class="text-cyan-400">微服务高并发</span>，
+                        我拥有从 0 到 1 构建大型复杂系统的全栈能力。
+                    </p>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400 border border-blue-500/20">
+                                <i data-lucide="award" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-white font-bold">国家级奖项得主</h4>
+                                <p class="text-sm text-gray-500">中国软件杯一等奖 (芯片质检系统)</p>
+                            </div>
+                        </div>
+                         <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400 border border-purple-500/20">
+                                <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-white font-bold">Top 1% 学霸</h4>
+                                <p class="text-sm text-gray-500">GPA 4.08 | 专业排名 1/44</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section (Anime.js Stagger Grid) -->
+    <section id="skills" class="py-20 bg-gray-900/30">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center text-white mb-16">
+                技术栈 <span class="text-cyan-500">.Stack</span>
+            </h2>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 skill-grid">
+                <div v-for="(skill, index) in skills" :key="index" 
+                     class="skill-card glass-card p-6 rounded-xl flex flex-col items-center justify-center gap-3 cursor-pointer opacity-0 text-center group">
+                    <i :data-lucide="skill.icon" class="w-8 h-8 group-hover:text-cyan-400 transition-colors" :class="skill.color"></i>
+                    <span class="font-mono text-sm font-bold text-gray-300 group-hover:text-white">{{ skill.name }}</span>
+                    <div class="h-1 w-full bg-gray-700 rounded-full overflow-hidden mt-2">
+                        <div class="h-full bg-cyan-500 transition-all duration-1000" :style="{width: skill.level + '%'}"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="flex justify-between items-end mb-12">
+                <div>
+                    <h2 class="text-4xl font-bold text-white mb-2">核心项目</h2>
+                    <p class="text-gray-500">Project Architectures</p>
+                </div>
+                <div class="hidden md:block h-[1px] bg-gray-700 flex-grow ml-8 mb-2"></div>
+            </div>
+
+            <div class="space-y-20">
+                <!-- Project 1 -->
+                <div class="group relative grid md:grid-cols-12 gap-8 items-center">
+                    <div class="md:col-span-7 relative z-10">
+                        <div class="glass-card p-8 rounded-2xl border border-cyan-500/20 relative overflow-hidden project-card">
+                            <div class="absolute top-0 right-0 p-4 opacity-10">
+                                <i data-lucide="cpu" class="w-32 h-32 text-cyan-500"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-cyan-400 transition-colors">IoT 物联网监测系统</h3>
+                            <p class="text-cyan-500 text-sm font-mono mb-4">中铝数为 | 架构设计 & 全栈开发</p>
+                            <p class="text-gray-400 mb-6 leading-relaxed">
+                                针对设备种类繁多、数据量巨大的工业场景。采用 Netty 处理 TCP/MQTT 报文，CesiumJS 实现三维可视化。
+                                解决了设备报警规则自定义、大数据实时入库与分发难题。基于适配器模式解耦硬件协议。
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span v-for="tag in ['SpringBoot', 'Redis', 'Netty', 'CesiumJS', 'MQTT']" class="px-3 py-1 bg-cyan-900/30 text-cyan-300 text-xs rounded-full border border-cyan-500/20">{{ tag }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md:col-span-5 md:text-right">
+                        <div class="text-8xl font-black text-gray-800/50 absolute -top-10 right-0 z-0">01</div>
+                        <ul class="text-gray-400 space-y-2 relative z-10 text-sm font-mono">
+                            <li class="flex items-center justify-end gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-green-500"></i> 单机支持 10万+ 并发连接</li>
+                            <li class="flex items-center justify-end gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-green-500"></i> 规则引擎动态配置</li>
+                            <li class="flex items-center justify-end gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-green-500"></i> GIS 三维实时映射</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Project 2 -->
+                <div class="group relative grid md:grid-cols-12 gap-8 items-center">
+                    <div class="md:col-span-5 order-2 md:order-1">
+                        <div class="text-8xl font-black text-gray-800/50 absolute -top-10 left-0 z-0">02</div>
+                        <ul class="text-gray-400 space-y-2 relative z-10 text-sm font-mono">
+                            <li class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-green-500"></i> Kubernetes 微服务编排</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-green-500"></i> 乐观锁 + Redis 解决超卖</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-green-500"></i> 自研票价规则引擎</li>
+                        </ul>
+                    </div>
+                    <div class="md:col-span-7 order-1 md:order-2 relative z-10">
+                        <div class="glass-card p-8 rounded-2xl border border-purple-500/20 relative overflow-hidden project-card hover:border-purple-500/50 transition-colors">
+                            <div class="absolute top-0 right-0 p-4 opacity-10">
+                                <i data-lucide="plane" class="w-32 h-32 text-purple-500"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-purple-400 transition-colors">微服务航空购票系统</h3>
+                            <p class="text-purple-500 text-sm font-mono mb-4">中国软件杯获奖项目 | 后端负责人</p>
+                            <p class="text-gray-400 mb-6 leading-relaxed">
+                                基于 Spring Cloud Alibaba 的分布式系统。解决了高并发下的缓存一致性（延迟双删）、
+                                动态票价计算及 Docker 容器化部署问题。
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span v-for="tag in ['K8S', 'Spring Cloud', 'Nacos', 'Docker', 'MySQL']" class="px-3 py-1 bg-purple-900/30 text-purple-300 text-xs rounded-full border border-purple-500/20">{{ tag }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact" class="py-12 border-t border-white/10 bg-black/50">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-2xl font-bold text-white mb-6">Let's Connect</h2>
+            <p class="text-gray-400 mb-8 max-w-md mx-auto">
+                目前正在寻找 <span class="text-white font-bold">Java 后端 / 架构设计 / 全栈</span> 相关工作机会。
+            </p>
+            <div class="flex justify-center gap-6 mb-8">
+                <a href="mailto:XX@foxmail.com" class="p-4 rounded-full bg-gray-800 hover:bg-cyan-600 hover:text-white text-gray-400 transition-all">
+                    <i data-lucide="mail" class="w-6 h-6"></i>
+                </a>
+                <a href="#" class="p-4 rounded-full bg-gray-800 hover:bg-gray-700 text-gray-400 transition-all">
+                    <i data-lucide="github" class="w-6 h-6"></i>
+                </a>
+                <a href="#" class="p-4 rounded-full bg-gray-800 hover:bg-blue-600 hover:text-white text-gray-400 transition-all">
+                    <i data-lucide="linkedin" class="w-6 h-6"></i>
+                </a>
+            </div>
+            <div class="text-xs text-gray-600 font-mono">
+                &copy; 2025 XX. Built with Vue 3 & Tailwind.
+            </div>
+        </div>
+    </footer>
+</div>
+
+<script>
+    const { createApp, ref, onMounted, nextTick } = Vue;
+
+    createApp({
+        setup() {
+            const isScrolled = ref(false);
+            const terminalContent = ref('');
+            
+            // 简历数据映射
+            const stats = [
+                { label: 'GPA', value: '4.08' },
+                { label: 'Rank', value: '1/44' },
+                { label: 'Awards', value: '5+' },
+                { label: 'Exp', value: '3 Yrs' }
+            ];
+
+            const skills = [
+                { name: 'Java/JUC', icon: 'coffee', level: 95, color: 'text-red-400' },
+                { name: 'Spring Boot', icon: 'layers', level: 90, color: 'text-green-400' },
+                { name: 'Kubernetes', icon: 'ship', level: 85, color: 'text-blue-400' },
+                { name: 'Docker', icon: 'container', level: 88, color: 'text-blue-300' },
+                { name: 'MySQL/SQL', icon: 'database', level: 92, color: 'text-orange-400' },
+                { name: 'Redis', icon: 'zap', level: 85, color: 'text-red-500' },
+                { name: 'Linux/DevOps', icon: 'terminal', level: 80, color: 'text-gray-200' },
+                { name: 'Netty/IO', icon: 'arrow-right-left', level: 75, color: 'text-purple-400' },
+                { name: 'Vue/JS', icon: 'code', level: 70, color: 'text-green-300' },
+                { name: 'Architecture', icon: 'box', level: 80, color: 'text-yellow-400' }
+            ];
+
+            // 终端打字效果逻辑
+            const runTerminal = async () => {
+                const commands = [
+                    { type: 'cmd', text: 'whoami' },
+                    { type: 'output', text: 'Senior Software Engineer / Architect' },
+                    { type: 'cmd', text: 'cat skills.json | grep "Expert"' },
+                    { type: 'output', text: '["Java", "Distributed Systems", "IoT", "DevOps"]' },
+                    { type: 'cmd', text: 'loading profile...' },
+                    { type: 'output', text: '加载中... [OK]' },
+                    { type: 'output', text: '姓名: XX <br> 邮箱: XX@foxmail.com <br> 毕业院校: 重庆对外经贸学院 (电子科学与技术) <br> 荣誉: 重庆市一等奖, 全国软件杯一等奖' }
+                ];
+
+                for (let cmd of commands) {
+                    if (cmd.type === 'cmd') {
+                        terminalContent.value += `<span class="text-blue-400">➜ ~ </span>`;
+                        await typeText(cmd.text);
+                        terminalContent.value += `<br>`;
+                    } else {
+                        terminalContent.value += `<span class="text-gray-300">${cmd.text}</span><br>`;
+                        await new Promise(r => setTimeout(r, 300));
+                    }
+                    // 自动滚动到底部
+                    await nextTick();
+                }
+            };
+
+            const typeText = async (text) => {
+                for (let char of text) {
+                    terminalContent.value += char;
+                    await new Promise(r => setTimeout(r, 50 + Math.random() * 50));
+                }
+            };
+
+            // Canvas 背景动画 (极客网络效果)
+            const initCanvas = () => {
+                const canvas = document.getElementById('bgCanvas');
+                const ctx = canvas.getContext('2d');
+                let width, height, particles;
+
+                const resize = () => {
+                    width = canvas.width = window.innerWidth;
+                    height = canvas.height = window.innerHeight;
+                };
+
+                class Particle {
+                    constructor() {
+                        this.x = Math.random() * width;
+                        this.y = Math.random() * height;
+                        this.vx = (Math.random() - 0.5) * 0.5;
+                        this.vy = (Math.random() - 0.5) * 0.5;
+                        this.size = Math.random() * 2;
+                    }
+                    update() {
+                        this.x += this.vx;
+                        this.y += this.vy;
+                        if (this.x < 0 || this.x > width) this.vx *= -1;
+                        if (this.y < 0 || this.y > height) this.vy *= -1;
+                    }
+                    draw() {
+                        ctx.fillStyle = 'rgba(56, 189, 248, 0.5)'; // Cyan color
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+
+                const initParticles = () => {
+                    particles = [];
+                    for (let i = 0; i < 80; i++) particles.push(new Particle());
+                };
+
+                const animate = () => {
+                    ctx.clearRect(0, 0, width, height);
+                    particles.forEach(p => {
+                        p.update();
+                        p.draw();
+                        // 连线逻辑
+                        particles.forEach(p2 => {
+                            const dx = p.x - p2.x;
+                            const dy = p.y - p2.y;
+                            const dist = Math.sqrt(dx*dx + dy*dy);
+                            if (dist < 150) {
+                                ctx.strokeStyle = `rgba(56, 189, 248, ${0.1 - dist/1500})`;
+                                ctx.beginPath();
+                                ctx.moveTo(p.x, p.y);
+                                ctx.lineTo(p2.x, p2.y);
+                                ctx.stroke();
+                            }
+                        });
+                    });
+                    requestAnimationFrame(animate);
+                };
+
+                window.addEventListener('resize', resize);
+                resize();
+                initParticles();
+                animate();
+            };
+
+            // 监听滚动
+            const handleScroll = () => {
+                isScrolled.value = window.scrollY > 50;
+            };
+
+            onMounted(() => {
+                // 初始化图标
+                lucide.createIcons();
+                
+                // 初始化 Canvas
+                initCanvas();
+                
+                // 运行终端动画
+                runTerminal();
+
+                // 监听滚动
+                window.addEventListener('scroll', handleScroll);
+
+                // Anime.js 技能卡片进场动画
+                anime({
+                    targets: '.skill-card',
+                    translateY: [50, 0],
+                    opacity: [0, 1],
+                    delay: anime.stagger(100, {start: 500}), // 延迟交错
+                    easing: 'easeOutExpo'
+                });
+
+                // 标题进场动画
+                anime({
+                    targets: '.animate-title',
+                    translateY: [-20, 0],
+                    opacity: [0, 1],
+                    duration: 1500,
+                    easing: 'easeOutExpo'
+                });
+            });
+
+            return {
+                stats,
+                skills,
+                terminalContent,
+                isScrolled
+            };
+        }
+    }).mount('#app');
+</script>
+</body>
+</html>

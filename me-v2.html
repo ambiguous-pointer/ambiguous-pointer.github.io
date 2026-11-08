@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XX | 全栈架构师 Portfolio</title>
+    
+    <!-- 核心依赖：Vue 3, Tailwind CSS, Anime.js -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    
+    <!-- 字体与图标 -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        geek: {
+                            bg: '#050505',
+                            card: '#0A0A0A',
+                            accent: '#00f2ff', // Cyber Cyan
+                            secondary: '#7000ff', // Cyber Purple
+                            text: '#e2e8f0',
+                            muted: '#64748b'
+                        }
+                    },
+                    backgroundImage: {
+                        'grid-pattern': "linear-gradient(to right, #1f2937 1px, transparent 1px), linear-gradient(to bottom, #1f2937 1px, transparent 1px)"
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* 核心视觉样式 */
+        body {
+            background-color: #050505;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        /* 隐藏滚动条但保留功能 */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050505;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00f2ff;
+        }
+
+        /* 动态背景网格 */
+        .bg-grid {
+            background-size: 40px 40px;
+            mask-image: linear-gradient(to bottom, transparent, 10%, black, 90%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, 5%, black, 95%, transparent);
+            opacity: 0.1;
+        }
+
+        /* 玻璃拟态卡片 (Apple Style Frost) */
+        .glass-panel {
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+        }
+
+        /* 霓虹文字 */
+        .neon-glow {
+            text-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
+        }
+        
+        /* 技能条动画 */
+        .skill-track {
+            background: rgba(255,255,255,0.05);
+        }
+        .skill-bar {
+            background: linear-gradient(90deg, #00f2ff, #7000ff);
+            box-shadow: 0 0 10px rgba(0, 242, 255, 0.3);
+        }
+
+        /* 交互微动效 */
+        .hover-lift {
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .hover-lift:hover {
+            transform: translateY(-5px) scale(1.01);
+            border-color: rgba(0, 242, 255, 0.3);
+        }
+
+        /* 极客终端光标 */
+        .cursor-blink {
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* Anime.js 目标类 (初始隐藏) */
+        .reveal-item {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+    </style>
+</head>
+<body>
+
+<div id="app" class="relative">
+    
+    <!-- 动态背景层 -->
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute inset-0 bg-grid bg-grid-pattern"></div>
+        <canvas id="neuralCanvas" class="absolute inset-0 opacity-30"></canvas>
+    </div>
+
+    <!-- 导航栏 (悬浮) -->
+    <nav class="fixed top-6 left-0 right-0 z-50 flex justify-center px-4">
+        <div class="glass-panel rounded-full px-6 py-3 flex items-center gap-8 transition-all duration-500" :class="{'w-full max-w-5xl rounded-xl top-0 mt-0': isScrolled}">
+            <div class="font-mono font-bold text-xl tracking-tighter text-white">
+                XX<span class="text-geek-accent">.dev</span>
+            </div>
+            <div class="hidden md:flex gap-6 text-sm font-medium text-geek-muted">
+                <a v-for="item in navItems" :href="item.href" class="hover:text-white transition-colors">{{ item.name }}</a>
+            </div>
+            <a href="mailto:XX@foxmail.com" class="ml-auto bg-white text-black px-4 py-1.5 rounded-full text-sm font-bold hover:bg-geek-accent transition-colors">
+                Hire Me
+            </a>
+        </div>
+    </nav>
+
+    <!-- 1. Hero Section -->
+    <header class="min-h-screen flex flex-col items-center justify-center relative z-10 px-6 pt-20">
+        <div class="max-w-5xl w-full">
+            <div class="font-mono text-geek-accent mb-4 tracking-wide hero-el">v2025.10.RELEASE</div>
+            <h1 class="text-6xl md:text-8xl font-black text-white leading-tight mb-8 hero-el tracking-tight">
+                Architecting <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-geek-accent to-geek-secondary neon-glow">The Distributed Future</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-geek-muted max-w-2xl mb-12 hero-el font-light">
+                全栈架构师 / 后端专家 / 极客开发者 <br>
+                <span class="text-sm font-mono mt-2 block text-gray-500">
+                    构建高并发、高可用、容器化的企业级解决方案
+                </span>
+            </p>
+            
+            <div class="flex flex-wrap gap-4 hero-el">
+                <button @click="scrollTo('#projects')" class="group relative px-8 py-4 bg-white text-black font-bold rounded-lg overflow-hidden transition-all hover:scale-105">
+                    <span class="relative z-10 flex items-center gap-2">
+                        浏览核心项目 <i data-lucide="arrow-down" class="w-4 h-4"></i>
+                    </span>
+                    <div class="absolute inset-0 bg-geek-accent transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></div>
+                </button>
+                <button @click="scrollTo('#about')" class="px-8 py-4 glass-panel text-white rounded-lg hover:bg-white/10 transition-colors font-mono">
+                    > run whoami
+                </button>
+            </div>
+        </div>
+
+        <!-- 滚动提示 -->
+        <div class="absolute bottom-10 animate-bounce text-geek-muted">
+            <i data-lucide="mouse" class="w-6 h-6"></i>
+        </div>
+    </header>
+
+    <!-- 2. Stats & Skills (数据可视化) -->
+    <section id="skills" class="py-32 relative z-10 border-t border-white/5">
+        <div class="container mx-auto px-6 max-w-6xl">
+            <div class="grid md:grid-cols-2 gap-20 items-center">
+                
+                <!-- 左侧：雷达/核心数据 -->
+                <div class="reveal-group">
+                    <h2 class="text-4xl font-bold text-white mb-2">技术栈概览</h2>
+                    <p class="text-geek-muted mb-8">Full Stack Competency</p>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-8">
+                        <div v-for="stat in config.stats" class="glass-panel p-6 rounded-2xl text-center">
+                            <div class="text-3xl font-black text-white font-mono mb-1">{{ stat.value }}</div>
+                            <div class="text-xs text-geek-muted uppercase tracking-wider">{{ stat.label }}</div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6 font-mono text-sm">
+                        <div v-for="skill in config.skills" class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-white">{{ skill.name }}</span>
+                                <span class="text-geek-accent">{{ skill.level }}%</span>
+                            </div>
+                            <div class="h-1.5 w-full skill-track rounded-full overflow-hidden">
+                                <div class="h-full skill-bar rounded-full" :style="{width: skill.level + '%'}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧：技能云/标签矩阵 -->
+                <div class="reveal-group">
+                    <div class="glass-panel p-8 rounded-3xl relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-32 bg-geek-secondary/10 blur-[100px] rounded-full"></div>
+                        <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                            <i data-lucide="cpu" class="text-geek-accent"></i> 核心能力
+                        </h3>
+                        <div class="flex flex-wrap gap-3">
+                            <span v-for="tag in config.keywords" class="px-4 py-2 bg-white/5 hover:bg-geek-accent/20 border border-white/10 hover:border-geek-accent/50 rounded-lg text-sm text-gray-300 hover:text-white transition-all cursor-default">
+                                {{ tag }}
+                            </span>
+                        </div>
+                        
+                        <div class="mt-8 pt-8 border-t border-white/10">
+                            <h4 class="text-sm font-bold text-white mb-4">证书 & 奖项</h4>
+                            <ul class="space-y-3 text-sm text-gray-400">
+                                <li v-for="award in config.awards" class="flex gap-3 items-start">
+                                    <i data-lucide="trophy" class="w-4 h-4 text-yellow-500 mt-0.5 shrink-0"></i>
+                                    <span>{{ award }}</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Projects (Timeline Style - Configurable) -->
+    <section id="projects" class="py-32 relative z-10 bg-black/50">
+        <div class="container mx-auto px-6 max-w-6xl">
+            <div class="flex items-end justify-between mb-20 reveal-group">
+                <div>
+                    <h2 class="text-5xl font-bold text-white mb-4">项目经历</h2>
+                    <p class="text-geek-muted max-w-md">
+                        深度参与从0到1的架构设计与研发。以下项目均可展开查看详细技术方案。
+                    </p>
+                </div>
+                <div class="hidden md:block font-mono text-geek-accent text-sm">
+                    Total Projects: {{ config.projects.length }}
+                </div>
+            </div>
+
+            <div class="space-y-24">
+                <article v-for="(project, index) in config.projects" :key="index" class="project-item relative grid md:grid-cols-12 gap-8 group">
+                    
+                    <!-- 序号背景 -->
+                    <div class="absolute -left-12 top-0 text-[10rem] font-black text-white/5 select-none pointer-events-none -z-10 leading-none font-mono">
+                        0{{ index + 1 }}
+                    </div>
+
+                    <!-- 左侧：项目描述 -->
+                    <div class="md:col-span-5 flex flex-col justify-center order-2 md:order-1 reveal-group">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="px-3 py-1 bg-geek-secondary/20 text-geek-secondary text-xs font-bold rounded uppercase tracking-wider border border-geek-secondary/30">
+                                {{ project.type }}
+                            </span>
+                            <span class="text-geek-muted text-sm font-mono">{{ project.role }}</span>
+                        </div>
+                        <h3 class="text-3xl font-bold text-white mb-4 group-hover:text-geek-accent transition-colors">
+                            {{ project.name }}
+                        </h3>
+                        <p class="text-gray-400 mb-6 leading-relaxed">
+                            {{ project.desc }}
+                        </p>
+                        
+                        <!-- 难点与方案 (可折叠或直接展示) -->
+                        <div class="space-y-4 mb-6">
+                            <div v-for="(qa, qIndex) in project.challenges" class="pl-4 border-l-2 border-white/10 hover:border-geek-accent transition-colors">
+                                <div class="text-sm text-gray-300 font-bold mb-1">Challenge: {{ qa.problem }}</div>
+                                <div class="text-sm text-geek-muted">Solution: {{ qa.solution }}</div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap gap-2">
+                            <span v-for="tech in project.stack" class="text-xs font-mono text-geek-accent px-2 py-1 bg-geek-accent/5 rounded border border-geek-accent/10">
+                                {{ tech }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- 右侧：视觉/代码块/Mockup -->
+                    <div class="md:col-span-7 order-1 md:order-2 reveal-group">
+                        <div class="glass-panel w-full aspect-video rounded-xl overflow-hidden relative group-hover:shadow-[0_0_50px_rgba(0,242,255,0.1)] transition-shadow duration-500 flex items-center justify-center bg-[#0F0F0F]">
+                            <!-- 这里使用 Canvas 或 SVG 生成极客风格的项目封面 -->
+                            <div class="absolute inset-0 bg-grid opacity-20"></div>
+                            
+                            <!-- 模拟代码编辑器界面 -->
+                            <div class="w-3/4 h-3/4 bg-[#1a1b26] rounded-lg shadow-2xl p-4 font-mono text-xs overflow-hidden border border-white/5 transform group-hover:scale-105 transition-transform duration-700">
+                                <div class="flex gap-1.5 mb-4">
+                                    <div class="w-2.5 h-2.5 rounded-full bg-red-500"></div>
+                                    <div class="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
+                                    <div class="w-2.5 h-2.5 rounded-full bg-green-500"></div>
+                                    <div class="ml-2 text-gray-500 text-[10px]">{{ project.name }}.java</div>
+                                </div>
+                                <div class="text-gray-400 space-y-1">
+                                    <div class="text-purple-400">@Service</div>
+                                    <div class="text-blue-400">public class <span class="text-yellow-300">{{ project.codeName }}Service</span> {</div>
+                                    <div class="pl-4 text-gray-500">// {{ project.desc.substring(0, 30) }}...</div>
+                                    <div class="pl-4"><span class="text-purple-400">private final</span> RedisTemplate redis;</div>
+                                    <div class="pl-4 text-green-400">/** 核心业务逻辑实现 */</div>
+                                    <div class="pl-4"><span class="text-blue-400">public</span> void execute() {</div>
+                                    <div class="pl-8 text-geek-accent">// {{ project.stack[0] }} Core Logic</div>
+                                    <div class="pl-8">...</div>
+                                    <div class="pl-4">}</div>
+                                    <div>}</div>
+                                </div>
+                            </div>
+                            
+                            <!-- 浮动图标 -->
+                            <div class="absolute bottom-6 right-6 p-3 glass-panel rounded-full">
+                                <i data-lucide="arrow-up-right" class="w-6 h-6 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. About (Terminal) -->
+    <section id="about" class="py-32 relative z-10 border-t border-white/5">
+        <div class="container mx-auto px-6 max-w-4xl">
+            <div class="glass-panel rounded-xl overflow-hidden border border-white/10 reveal-group">
+                <div class="bg-[#1a1a1a] px-4 py-3 flex items-center justify-between border-b border-white/5">
+                    <div class="flex gap-2">
+                        <div class="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
+                        <div class="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
+                        <div class="w-3 h-3 rounded-full bg-[#27c93f]"></div>
+                    </div>
+                    <div class="text-xs text-gray-500 font-mono">zsh — 80x24</div>
+                </div>
+                <div class="p-8 bg-[#0c0c0c] font-mono text-sm min-h-[400px]">
+                    <div class="text-green-400 mb-2">➜  ~  whoami</div>
+                    <div class="text-gray-300 mb-6">
+                        XX, 23岁, 电子科学与技术专业。<br>
+                        GPA 4.08 (1/44), 重庆市一等奖, 中国软件杯一等奖得主。<br>
+                        热衷于分布式系统、源码分析与造轮子。
+                    </div>
+
+                    <div class="text-green-400 mb-2">➜  ~  cat education.txt</div>
+                    <div class="text-gray-300 mb-6">
+                        > 重庆对外经贸学院 (2020-2024)<br>
+                        > 荣誉: 国家励志奖学金, 校三好学生, 优秀毕业生
+                    </div>
+
+                    <div class="text-green-400 mb-2">➜  ~  list work_experience</div>
+                    <div class="text-gray-300 mb-6 space-y-2">
+                        <div class="flex justify-between">
+                            <span>[2024.09 - 2025.07] 重庆巴云科技</span>
+                            <span class="text-geek-muted">全栈开发 / 团队管理</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>[2023.04 - 2024.03] 重庆讯研数字</span>
+                            <span class="text-geek-muted">Java开发 / DevOps</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>[2025.07 - Now] 中铝数为(成都)</span>
+                            <span class="text-geek-muted">全栈开发 (IoT方向)</span>
+                        </div>
+                    </div>
+
+                    <div class="text-green-400 mb-2 flex items-center">
+                        ➜  ~  <span class="w-2.5 h-5 bg-gray-500 ml-2 cursor-blink"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 text-center text-geek-muted text-sm relative z-10">
+        <div class="mb-4">
+            <a href="mailto:XX@foxmail.com" class="text-white hover:text-geek-accent transition-colors font-mono">XX@foxmail.com</a>
+        </div>
+        <p>&copy; 2025 Designed & Coded by XX.</p>
+    </footer>
+
+</div>
+
+<script>
+    const { createApp, ref, onMounted, nextTick } = Vue;
+
+    createApp({
+        setup() {
+            const isScrolled = ref(false);
+            
+            // ==================================================================================
+            // 🛠️ CONFIGURATION AREA (请在这里粘贴您的 JSON 数据以配置项目)
+            // ==================================================================================
+            const config = {
+                // 顶部导航
+                navItems: [
+                    { name: 'Projects', href: '#projects' },
+                    { name: 'Skills', href: '#skills' },
+                    { name: 'About', href: '#about' }
+                ],
+                // 核心数据统计
+                stats: [
+                    { label: 'GPA', value: '4.08' },
+                    { label: 'Awards', value: '5+' },
+                    { label: 'Projects', value: '6+' },
+                    { label: 'Exp', value: '3 Yrs' }
+                ],
+                // 技能条
+                skills: [
+                    { name: 'Java / JUC / JVM', level: 95 },
+                    { name: 'Spring Cloud / Alibaba', level: 90 },
+                    { name: 'K8S / Docker / DevOps', level: 85 },
+                    { name: 'MySQL / Redis / SQL', level: 92 },
+                    { name: 'Netty / IoT Protocol', level: 80 }
+                ],
+                // 关键词云
+                keywords: [
+                    "Distributed Systems", "Microservices", "High Concurrency", 
+                    "Event-Driven", "Design Patterns", "Clean Code", "Linux", 
+                    "Vue 3", "UniApp", "CesiumJS", "RabbitMQ", "Minio"
+                ],
+                // 奖项
+                awards: [
+                    "中国软件杯一等奖 (芯片质检系统)",
+                    "中国软件杯三等奖 (航空购票系统)",
+                    "重庆市技能大赛一等奖",
+                    "校级一等奖学金 / 国家励志奖学金"
+                ],
+                // 🔥 项目经历 (可无限添加)
+                // 格式: { name, type, role, desc, stack:[], challenges: [{problem, solution}], codeName }
+                projects: [
+                    {
+                        name: "IoT 物联网监测系统",
+                        codeName: "IotMonitor",
+                        type: "Enterprise",
+                        role: "架构设计 & 全栈开发",
+                        desc: "针对中铝设备种类繁多、数据量巨大的工业场景。构建了基于Netty的高性能网关，实现了数据的实时采集、解析、报警与三维可视化展示。",
+                        stack: ["SpringBoot", "Netty", "Redis", "CesiumJS", "MQTT", "SqlServer"],
+                        challenges: [
+                            { problem: "设备报警规则高度自定义与动态化", solution: "设计动态规则引擎，支持用户配置化定义报警阈值" },
+                            { problem: "硬件协议多样且耦合严重", solution: "基于适配器模式(Adapter)解耦硬件协议与业务逻辑，统一采集端口" },
+                            { problem: "海量数据实时入库", solution: "基于Redis缓存+批量写入策略，并使用WebSocket Stomp实时推送前端" }
+                        ]
+                    },
+                    {
+                        name: "线上签约平台",
+                        codeName: "SignPlatform",
+                        type: "FinTech",
+                        role: "核心开发",
+                        desc: "处理复杂业务交易流的签约平台。实现了动态表单渲染、跑批引擎及自动化交易处理。",
+                        stack: ["SpringBoot", "Dubbo", "ZK", "Design Patterns", "UniApp"],
+                        challenges: [
+                            { problem: "业务种类繁多，逻辑复杂", solution: "基于抽象工厂和代理模式编写交易引擎，实现业务原子化拆分与动态组合" },
+                            { problem: "高并发下的数据一致性", solution: "引入乐观锁机制，配合Redisson分布式锁解决超卖与重复提交" }
+                        ]
+                    },
+                    {
+                        name: "微服务航空购票系统",
+                        codeName: "AirTicket",
+                        type: "Microservice",
+                        role: "后端负责人",
+                        desc: "基于Spring Cloud Alibaba的分布式购票系统。实现了动态票价计算、高并发抢票及全链路容器化部署。",
+                        stack: ["Spring Cloud Alibaba", "Nacos", "K8S", "Docker", "MySQL"],
+                        challenges: [
+                            { problem: "高并发下的库存超卖", solution: "Redis原子操作扣减库存 + 数据库乐观锁兜底" },
+                            { problem: "缓存与数据库一致性", solution: "采用'延迟双删'策略，配合独立微服务进行最终一致性校验" },
+                            { problem: "动态票价计算", solution: "自研规则引擎，根据舱位、时间、市场热度动态计算价格" }
+                        ]
+                    },
+                    {
+                        name: "虫草信息化养殖管理",
+                        codeName: "Cordyceps",
+                        type: "Data System",
+                        role: "重构 & 优化",
+                        desc: "解决百万级数据报表统计慢、Excel导入导出卡顿问题。重构了遗留的单体系统。",
+                        stack: ["MySQL 8", "EasyExcel", "SpringBoot 3", "Gradle"],
+                        challenges: [
+                            { problem: "多维度报表统计极慢", solution: "利用MySQL 8的WITH(CTE)和窗口函数重写复杂SQL，减少应用层循环" },
+                            { problem: "大数据量Excel导入OOM", solution: "使用Alibaba EasyExcel流式读取，结合Batch Insert批量插入" }
+                        ]
+                    },
+                    {
+                        name: "保洁服务综合管理系统",
+                        codeName: "CleanService",
+                        type: "Management",
+                        role: "架构设计",
+                        desc: "复杂的人员调度与订单管理系统。解决了包年包月自动续费及灵活派单问题。",
+                        stack: ["Java", "MySQL", "Quartz", "Algorithm"],
+                        challenges: [
+                            { problem: "人员调度逻辑复杂(位置/时长/偏好)", solution: "抽象时间线与员工锁概念，基于贪心算法实现自动推荐调度" },
+                            { problem: "大量定时任务消耗资源", solution: "延迟生成策略：仅在任务触发前动态生成具体工单，而非预生成所有数据" }
+                        ]
+                    }
+                ]
+            };
+            // ==================================================================================
+
+            const scrollTo = (selector) => {
+                document.querySelector(selector).scrollIntoView({ behavior: 'smooth' });
+            };
+
+            // 极客神经网络背景动画
+            const initCanvas = () => {
+                const canvas = document.getElementById('neuralCanvas');
+                const ctx = canvas.getContext('2d');
+                let w, h, particles = [];
+                
+                const resize = () => {
+                    w = canvas.width = window.innerWidth;
+                    h = canvas.height = window.innerHeight;
+                };
+                window.addEventListener('resize', resize);
+                resize();
+
+                class Particle {
+                    constructor() {
+                        this.reset();
+                    }
+                    reset() {
+                        this.x = Math.random() * w;
+                        this.y = Math.random() * h;
+                        this.vx = (Math.random() - 0.5) * 0.5;
+                        this.vy = (Math.random() - 0.5) * 0.5;
+                        this.size = Math.random() * 1.5;
+                    }
+                    update() {
+                        this.x += this.vx;
+                        this.y += this.vy;
+                        if(this.x < 0 || this.x > w || this.y < 0 || this.y > h) this.reset();
+                    }
+                    draw() {
+                        ctx.fillStyle = 'rgba(0, 242, 255, 0.3)';
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+
+                for(let i=0; i<60; i++) particles.push(new Particle());
+
+                const animate = () => {
+                    ctx.clearRect(0,0,w,h);
+                    particles.forEach((p, i) => {
+                        p.update();
+                        p.draw();
+                        // 连线
+                        for(let j=i+1; j<particles.length; j++){
+                            const p2 = particles[j];
+                            const dx = p.x - p2.x;
+                            const dy = p.y - p2.y;
+                            const dist = Math.sqrt(dx*dx + dy*dy);
+                            if(dist < 100) {
+                                ctx.beginPath();
+                                ctx.strokeStyle = `rgba(0, 242, 255, ${0.1 - dist/1000})`;
+                                ctx.moveTo(p.x, p.y);
+                                ctx.lineTo(p2.x, p2.y);
+                                ctx.stroke();
+                            }
+                        }
+                    });
+                    requestAnimationFrame(animate);
+                };
+                animate();
+            };
+
+            // 滚动触发动画 Observer
+            const initObservers = () => {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if(entry.isIntersecting) {
+                            // 使用 anime.js 触发子元素动画
+                            anime({
+                                targets: entry.target.querySelectorAll('.reveal-group > *'),
+                                translateY: [50, 0],
+                                opacity: [0, 1],
+                                duration: 800,
+                                delay: anime.stagger(100),
+                                easing: 'easeOutCubic'
+                            });
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.1 });
+
+                document.querySelectorAll('section').forEach(sec => observer.observe(sec));
+            };
+
+            onMounted(() => {
+                lucide.createIcons();
+                initCanvas();
+                
+                window.addEventListener('scroll', () => {
+                    isScrolled.value = window.scrollY > 50;
+                });
+
+                // Hero 进场动画
+                anime({
+                    targets: '.hero-el',
+                    translateY: [30, 0],
+                    opacity: [0, 1],
+                    delay: anime.stagger(200, {start: 300}),
+                    easing: 'easeOutExpo'
+                });
+
+                initObservers();
+            });
+
+            return {
+                config,
+                isScrolled,
+                scrollTo
+            };
+        }
+    }).mount('#app');
+</script>
+</body>
+</html>

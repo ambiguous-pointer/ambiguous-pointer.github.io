@@ -1,0 +1,1 @@
+import{_ as e,o as t,c as r}from"./chunks/framework.DFV5UN9c.js";const d=JSON.parse('{"title":"个人简历","description":"","frontmatter":{"title":"个人简历","layout":"apple-resume"},"headers":[],"relativePath":"resume.md","filePath":"resume.md"}'),a={name:"resume.md"};function s(o,c,n,m,p,i){return t(),r("div")}const l=e(a,[["render",s]]);export{d as __pageData,l as default};

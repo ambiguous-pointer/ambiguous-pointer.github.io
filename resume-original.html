@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人简历</title>
+    <style>
+        /* 基础重置与排版 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #000;
+            font-size: 13px;
+            line-height: 1.5;
+            padding: 20px;
+        }
+
+        .container {
+            width: 1000px;
+            margin: 0 auto;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding-bottom: 30px;
+        }
+
+        /* 顶部 Header */
+        .header {
+            background-color: #7b94b5;
+            /* 类似图片中的蓝灰色 */
+            color: #fff;
+            padding: 20px 30px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 100px;
+        }
+
+        .header h1 {
+            font-size: 42px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .header .intent {
+            font-size: 16px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .avatar-placeholder {
+            position: absolute;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #e0f2f1 0%, #81c784 100%);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            /* 类似图片中的不规则圆形 */
+        }
+
+        /* 基本信息 */
+        .basic-info {
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .basic-info div {
+            flex: 1;
+        }
+
+        /* 模块标题 */
+        .section-title {
+            background-color: #dfe6f0;
+            color: #43699d;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 5px 15px;
+            margin: 0 15px 10px 15px;
+            border-radius: 2px;
+        }
+
+        /* 内容区块通用边距 */
+        .section-content {
+            padding: 0 30px;
+            margin-bottom: 15px;
+        }
+
+        /* 教育背景 */
+        .education {
+            display: flex;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .education div {
+            margin-right: 40px;
+        }
+
+        /* 专业技能 */
+        .skills-text {
+            text-align: justify;
+            margin-bottom: 5px;
+        }
+
+        /* 证书和奖项区 (网格布局) */
+        .cert-grid {
+            display: grid;
+            grid-template-columns: 2.5fr 3.5fr 2fr 1fr;
+            gap: 15px;
+        }
+
+        .cert-col h3 {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        ul {
+            list-style-type: disc;
+            padding-left: 15px;
+        }
+
+        li {
+            margin-bottom: 3px;
+        }
+
+        /* 工作和项目经历 */
+        .job-card {
+            border: 1px dotted #333;
+            margin: 0 15px 15px 15px;
+            padding: 10px;
+        }
+
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 14px;
+            border-bottom: 1px dashed #999;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+
+        /* 针对普通项目布局的网格 */
+        .project-grid {
+            display: grid;
+            grid-template-columns: 10% 20% 25% 45%;
+            gap: 10px;
+        }
+
+        .project-grid-headers {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .project-row {
+            padding: 10px 0;
+            border-bottom: 1px dashed #ccc;
+        }
+
+        .project-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .proj-name {
+            display: flex;
+            align-items: center;
+        }
+
+        .tech-stack {
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        /* 针对最后一个经历的 5 列网格布局 */
+        .five-col-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+        }
+
+        .five-col-grid h4 {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 13px;
+        }
+
+        /* 自我评价 */
+        .self-eval p {
+            text-indent: 2em;
+            margin-bottom: 5px;
+            text-align: justify;
+        }
+
+        /* 页脚 */
+        .footer {
+            text-align: right;
+            padding: 0 30px;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container" id="app">
+        <!-- 内容将由JS动态生成注入到这里 -->
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. 数据配置区 (JSON 格式)
+        // 修改这里的文字即可完全改变网页内容
+        // ==========================================
+        const resumeData = {
+            header: {
+                title: "个人简历",
+                intentions: "求职意向：架构设计 | 后端开发 | 全栈开发 | 运维 | 技术管理"
+            },
+            basicInfo: [
+                { label: "姓名：", value: "XX" },
+                { label: "出生年月：", value: "2002年9月" },
+                { label: "邮箱：", value: "XX@foxmail.com" },
+                { label: "手机号码：", value: "177XXXX835" }
+            ],
+            education: {
+                school: "重庆对外经贸学院（本科）",
+                major: "电子科学与技术",
+                gpa: "GPA: 4.08",
+                rank: "排名：1/44(班级) 10/328(专业)"
+            },
+            skills: [
+                "基础知识类：熟练掌握Java、JUC、内存模型、线程模型、IO模型、反射与代理、数据结构与算法、设计模式、线程池技术、编译原理、计算机网络及操作系统原理。熟悉操作系统内存分配和IO复用，了解Java AQS、ThreadPool、JVM内部机制，并熟悉MySQL的原理及优化技术，如反范式设计、执行计划、索引、BufferPool配置等。",
+                "框架与中间件类：熟练使用Nginx、Docker和K8S，理解其核心原理；能够熟练使用并集成RabbitMQ、Minio、MySQL等常见中间件，掌握其工作机制与原理。",
+                "开发与解决方案架构类：熟悉分布式开发、容器化开发，熟悉微信小程序、公众号、微信支付的开发，具备Kubernetes+DevOps实践经验,软硬件开发体系，以及Linux环境下的开发和部署能力。拥有从项目设计到开发、测试、部署的全流程项目经验。"
+            ],
+            certificates: [
+                {
+                    title: "职业技能证书",
+                    items: [
+                        "计算机技术与软件专业技术资格（中级）证书-软件设计师",
+                        "大数据应用开发（Java）职业技能高级证书"
+                    ]
+                },
+                {
+                    title: "竞赛获奖证书",
+                    items: [
+                        "2021-12月 重庆巴渝工匠杯“商务软件解决方案”赛项 重庆市一等奖",
+                        "2022-05月 校级软件设计大赛 三等奖",
+                        "2022-08月 中国软件杯大赛 B1微服务架构的国内航班查询与预订系统 全国三等奖",
+                        "2022-12月 中国软件杯大赛 B8芯片质检系统 全国一等奖"
+                    ]
+                },
+                {
+                    title: "荣誉证书",
+                    items: [
+                        "2022-12月 校级一等奖学金",
+                        "2022-12月 国家励志奖学金",
+                        "2023-02月 校三好学生",
+                        "2023-03月 优良毕业生",
+                        "2023-06月 技能专家"
+                    ]
+                },
+                {
+                    title: "个人履历",
+                    items: [
+                        "社团技术负责人",
+                        "竞赛培训讲师",
+                        "实训代课助教",
+                        "学习委员"
+                    ]
+                }
+            ],
+            workExperience: [
+                {
+                    date: "2025年7月~至今",
+                    company: "中铝数为（成都）科技有限责任公司（央企 全职）",
+                    role: "全栈开发",
+                    layout: "standard", // 标准的项目列表布局
+                    projects: [
+                        {
+                            name: "IOT物联网监测",
+                            responsibilities: ["主要开发", "硬件设备报文解析", "IO、网络处理", "GIS三维服务实现"],
+                            keyPoints: ["设备种类、厂商、型号众多", "设备报警规则众多和自定义", "数据二次推送和消费状态管理", "数据含义随着场景变化", "数据量大、数据需实时性"],
+                            techStack: "技术栈：SpringBoot、Redis、MyBatis、SqlServer、Go、CesiumJs、MQTT、Netty等",
+                            solutions: [
+                                "拆分子服务分为采集子程序、采集管理程序、展示数据大屏程序，基于WebSocket的Stomp进行设备是否在线和最近采集情况服务之间的数据同步",
+                                "抽象为硬件、协议、采集箱、采集方式等，基于组合的设计模式进一步的解耦合。由采集统一管理端口和传感器设备进行数据的统一收集",
+                                "基于quartz实现采集任务的自动执行,抽象采集任务为每种不同类型的任务进行单独开发",
+                                "例如雷达和渗压计都可以作为水位测量、表面位移可以是角分仪器进行测量可以是GPS测量解算得到,基于Adapter设计模式进行处理，入库时只需要考虑水位即可",
+                                "基于ApplicationEvent事件机制进行消息的消费和分发处理，解决当数据到达解析后校验、入库、推送、深处理等功能",
+                                "企业为单位进行分库、基于业务库进行统一管理，对于数据入库时基于点位消息进行分别入库",
+                                "基于GO编写边缘网关采集设备系统，对IO流进行转发合并处理、端口桥接、数据转换等"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    date: "2024年9月~2025年7月",
+                    company: "重庆巴云科技有限公司（国企 全职实习）",
+                    role: "后端开发",
+                    layout: "standard",
+                    projects: [
+                        {
+                            name: "线上签约平台",
+                            responsibilities: ["数据清理和校验", "动态表单和参数实现", "跑批引擎编写", "交易引擎的优化", "项目部署和运维", "三方平台对接"],
+                            keyPoints: ["业务种类繁多", "子依赖众多", "附件种类众多且量大", "冷备存储恢复和提取"],
+                            techStack: "技术栈：SpringBoot、Redis、MySQL、MyBatisPlus、Dubbo、ZK、UniApp、Electron等",
+                            solutions: [
+                                "基于抽象工厂、代理等设计模式进行交易引擎的编写，业务原子化功能拆分从而实现不同业务种类的组合。",
+                                "基于表单动态渲染和数据库动态配置的方式，实现每次业务的参数高度自定义化，能够满足不同业务组合的方式。",
+                                "将每个子模块和子系统进行按照功能和职责进行编排部署，同时编写统一日志收集处理脚本和引入健康检测等实现对多个子系统的监控和管理。",
+                                "异步流式分发任务，多线程压缩校验计算，基于rsync进行同步和汇总。建立端口映射异网组合，规范目录实现业务系统读取介质支持OSS、冷备文件实现用户无感知，存储无压力"
+                            ]
+                        },
+                        {
+                            name: "账务系统",
+                            responsibilities: ["出金入金", "冻结解冻", "项目运维和部署", "交易引擎的优化", "跑批任务编写", "三方API对接"],
+                            keyPoints: ["业务逻辑复杂", "会计财务知识", "子模块众多", "权限认证和加密"],
+                            techStack: "",
+                            solutions: [
+                                "编写交易引擎实现不用的业务逻辑系统，对系统进行模块拆分为和核心交易和支付交易和跑批，交易引擎依据会计分录进行流水处理和复式记账，同时对关键数据库行进行 摘要计算防止数据库篡改，每个模块之间使用Dubbo RPC进行调用充分解耦合。",
+                                "使用 Scheduled和任务队列结合线程池进行跑批，基于借贷恒等式进行数据校验跑批，对银行的对账CSV进行下载和核对等。",
+                                "构建自动化脚本，对每个子模块进行单独的构建为容器，然后使用Docker Compose进行容器编排，基于环境变量的方式实现动态参数配置，对不同业务的模块使用Docker网络隔离和桥接，同时引入健康检查实现服务的异常重启和检测。",
+                                "设计动态权限设置，对每个子系统进行单独的设置Key和Secret，使用RSA、SM2和AES、SM4进行数据加密和签名确保数据完整性和隐私性"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    date: "2023年4月~2024年3月",
+                    company: "重庆讯研数字技术有限公司（民企 全职）",
+                    role: "全栈开发",
+                    layout: "grid", // 五列网格布局
+                    columns: [
+                        {
+                            title: "虫草信息化养殖管理系统",
+                            items: ["代码重构和编写", "uni-app重构和编写", "项目部署和运维", "统计模块实现和优化", "数据治理和清除"]
+                        },
+                        {
+                            title: "数据清洗系统",
+                            items: ["项目设计和开发", "Excel流式导入", "数据库设计与实现", "支持Json扩展自定义", "SpringBoot3+Gradle"]
+                        },
+                        {
+                            title: "运维工作",
+                            items: ["DevOps系统平台搭建和配置", "基础开发平台搭建和配置", "服务器和网络架构规划", "路由和VPN等服务搭建", "网络诊断和修复"]
+                        },
+                        {
+                            title: "其余工作和技术",
+                            items: ["局域网电话系统 Liblinphone SDK使用", "Apple应用上架全流程", "Aliyun 申请、部署、运维全流程", "自动化脚本编写", "标准文档规范建设"]
+                        },
+                        {
+                            title: "团队管理",
+                            items: ["撰写任务计划书", "功能拆解和划分", "技术选型和测试", "需求对接和确认", "使用甘特图进行进度管理"]
+                        }
+                    ]
+                }
+            ],
+            selfEvaluation: [
+                "本人专业技能良好，有良好的团队协同开发意识，有明确的职业规划。通过技能竞赛及社团负责人的经历，具备较强的心理素质。具有良好的编程习惯和有良好的数据库设计能力，有自我解决问题能力，拥有整个软件开发流程的思维和素养。同时具有复杂高难度技术问题研究能力，有项目难度问题攻关能力。具备软硬件，大型并发项目，融合分布式架构搭建能力。",
+                "具有系统研发全生命周期，从需求分析、架构设计、开发测试到部署运维，具备端到端交付能力。有充足的项目经历，具有项目从0-1的能力。具有较强的自我学习和解决问题的能力，熟悉各种常见的软件开发体系架构，如分布式、微服务、微信、软硬件等。"
+            ]
+        };
+
+        // ==========================================
+        // 2. 渲染逻辑 (JavaScript)
+        // 根据 JSON 数据自动生成 HTML 结构
+        // ==========================================
+        function renderResume() {
+            const app = document.getElementById('app');
+
+            // --- Header 生成 ---
+            let html = `
+            <div class="header">
+                <h1>${resumeData.header.title}</h1>
+                <div class="intent">${resumeData.header.intentions}</div>
+                <div class="avatar-placeholder"></div>
+            </div>
+        `;
+
+            // --- 基本信息 生成 ---
+            html += `<div class="basic-info">`;
+            html += `<div>${resumeData.basicInfo[0].label}${resumeData.basicInfo[0].value}</div>`;
+            html += `<div>${resumeData.basicInfo[1].label}${resumeData.basicInfo[1].value}</div>`;
+            html += `</div><div class="basic-info" style="padding-top:0;">`;
+            html += `<div>${resumeData.basicInfo[2].label}${resumeData.basicInfo[2].value}</div>`;
+            html += `<div>${resumeData.basicInfo[3].label}${resumeData.basicInfo[3].value}</div>`;
+            html += `</div>`;
+
+            // --- 教育背景 生成 ---
+            html += `<div class="section-title">教育背景</div>`;
+            html += `
+            <div class="section-content education">
+                <div>${resumeData.education.school}</div>
+                <div>${resumeData.education.major}</div>
+                <div>${resumeData.education.gpa}</div>
+                <div>${resumeData.education.rank}</div>
+            </div>
+        `;
+
+            // --- 专业技能 生成 ---
+            html += `<div class="section-title">专业技能</div>`;
+            html += `<div class="section-content">`;
+            resumeData.skills.forEach(skill => {
+                html += `<p class="skills-text">${skill}</p>`;
+            });
+            html += `</div>`;
+
+            // --- 技能证书和获奖证书 生成 ---
+            html += `<div class="section-title">技能证书和获奖证书</div>`;
+            html += `<div class="section-content cert-grid">`;
+            resumeData.certificates.forEach(cert => {
+                html += `<div class="cert-col">
+                        <h3>${cert.title}</h3>
+                        <ul>
+                            ${cert.items.map(item => `<li>${item}</li>`).join('')}
+                        </ul>
+                     </div>`;
+            });
+            html += `</div>`;
+
+            // --- 工作和项目经历 生成 ---
+            html += `<div class="section-title">工作和项目经历</div>`;
+
+            resumeData.workExperience.forEach(job => {
+                html += `<div class="job-card">
+                        <div class="job-header">
+                            <div>${job.date}</div>
+                            <div>${job.company}</div>
+                            <div>${job.role}</div>
+                        </div>`;
+
+                // 依据布局类型渲染不同样式的项目表
+                if (job.layout === 'standard') {
+                    html += `<div class="project-grid project-grid-headers">
+                            <div>项目名称：</div>
+                            <div>主要职责：</div>
+                            <div>项目关键点：</div>
+                            <div>解决方案：</div>
+                         </div>`;
+
+                    job.projects.forEach(proj => {
+                        html += `
+                        <div class="project-grid project-row">
+                            <div class="proj-name"><ul><li>${proj.name}</li></ul></div>
+                            <div>
+                                <ul>${proj.responsibilities.map(r => `<li>${r}</li>`).join('')}</ul>
+                            </div>
+                            <div>
+                                <ul>${proj.keyPoints.map(k => `<li>${k}</li>`).join('')}</ul>
+                            </div>
+                            <div>
+                                ${proj.techStack ? `<div class="tech-stack">${proj.techStack}</div>` : ''}
+                                <ul>${proj.solutions.map(s => `<li>${s}</li>`).join('')}</ul>
+                            </div>
+                        </div>
+                    `;
+                    });
+                } else if (job.layout === 'grid') {
+                    html += `<div class="five-col-grid">`;
+                    job.columns.forEach(col => {
+                        html += `<div>
+                                <h4>${col.title}</h4>
+                                <ul>${col.items.map(item => `<li>${item}</li>`).join('')}</ul>
+                             </div>`;
+                    });
+                    html += `</div>`;
+                }
+                html += `</div>`;
+            });
+
+            // --- 自我评价和突出点 生成 ---
+            html += `<div class="section-title">自我评价和突出点</div>`;
+            html += `<div class="section-content self-eval">`;
+            resumeData.selfEvaluation.forEach(para => {
+                html += `<p>${para}</p>`;
+            });
+            html += `</div>`;
+
+            html += `<div class="footer">第1页/共1页</div>`;
+
+            // 将生成的 HTML 注入到容器中
+            app.innerHTML = html;
+        }
+
+        // 执行渲染
+        renderResume();
+    </script>
+
+</body>
+
+</html>

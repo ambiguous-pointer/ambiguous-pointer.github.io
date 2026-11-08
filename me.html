@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人简历 - 简约版本</title>
+    <!-- 1. Web Components 兼容性拦截脚本 (使用 ES5 语法确保旧浏览器能执行这段代码) -->
+    <script>
+        (function () {
+            // 检测是否支持自定义元素和 Shadow DOM
+            var supportsCustomElements = 'customElements' in window;
+            var supportsShadowDOM = !!HTMLElement.prototype.attachShadow;
+
+            if (!supportsCustomElements || !supportsShadowDOM) {
+                // 等待 DOM 加载完毕后，强制覆盖整个网页为报错提示
+                document.addEventListener('DOMContentLoaded', function () {
+                    document.body.innerHTML =
+                        '<div style="display:flex; justify-content:center; align-items:center; height:100vh; background-color:#fbfbfd; color:#1d1d1f; font-family:-apple-system, sans-serif; text-align:center; padding: 20px;">' +
+                        '<div>' +
+                        '<h1 style="font-size:32px; margin-bottom:15px;">⚠️ 浏览器版本过低</h1>' +
+                        '<p style="font-size:18px; color:#86868b; line-height:1.6;">' +
+                        '您的浏览器不支持 <b>Web Components</b> 技术，无法渲染此动态简历。<br>' +
+                        '请使用最新版本的 Chrome、Edge、Safari 或 Firefox 浏览器重新访问。' +
+                        '</p>' +
+                        '</div>' +
+                        '</div>';
+                });
+
+                // 停止解析和加载后续的 DOM 与脚本 (直接不给看)
+                if (window.stop) {
+                    window.stop();
+                } else {
+                    document.execCommand("Stop");
+                }
+            }
+        })();
+    </script>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+
+<body>
+
+    <!-- 悬浮毛玻璃导航 -->
+    <floating-nav></floating-nav>
+
+    <!-- 主体内容容器 -->
+    <main class="container">
+        <!-- 头部信息 -->
+        <section id="hero">
+            <hero-section></hero-section>
+        </section>
+
+        <!-- 教育背景 -->
+        <section id="education">
+            <h2 class="section-title">教育背景</h2>
+            <education-section></education-section>
+        </section>
+
+        <!-- 专业技能 -->
+        <section id="skills">
+            <h2 class="section-title">专业技能</h2>
+            <skills-section></skills-section>
+        </section>
+
+        <!-- 工作和项目经历 -->
+        <section id="experience">
+            <h2 class="section-title">工作和项目经历</h2>
+            <experience-section></experience-section>
+        </section>
+
+        <!-- 证书与奖项 -->
+        <section id="certificates">
+            <h2 class="section-title">技能证书和获奖证书</h2>
+            <cert-section></cert-section>
+        </section>
+
+        <!-- 自我评价 -->
+        <section id="evaluation">
+            <h2 class="section-title">自我评价和突出点</h2>
+            <eval-section></eval-section>
+        </section>
+    </main>
+
+    <!-- 引入主入口脚本 -->
+    <script type="module" src="./js/main.js"></script>
+</body>
+
+</html>
